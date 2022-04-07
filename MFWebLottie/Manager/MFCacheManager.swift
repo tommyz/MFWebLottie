@@ -69,8 +69,19 @@ class MFCacheManager: NSObject {
     /// - Parameter fileName: json名
     /// - Returns: json路径
     func getCachePath(fileName:String) -> String{
+        let cacheStr = self.cacheInfo[fileName]
+        print("cacheStr=\(cacheStr)")
+        let name = URL(fileURLWithPath: fileName).lastPathComponent
+        print("name=\(name)")
+        
+        let filePath = mfDownloadFilePath + "/\(name)"
+        print("filePath=\(filePath)")
         if (self.cacheInfo[fileName] ?? "NotFound") != "NotFound"{
-            return mfUnZipPath + "/\(fileName)" + "/\(fileName).json"
+//            return mfUnZipPath + "/\(fileName)" + "/\(fileName).json"
+            
+//            let name = fileURL.lastPathComponent
+            return filePath
+//            return name
         }else{
             return "NotFound"
         }
@@ -84,18 +95,22 @@ class MFCacheManager: NSObject {
    public func getCacheSize() -> CGFloat {
         let folderPath = NSString.init(string: mfResourceRootPath)
         let manager = FileManager.default
+
         if manager.fileExists(atPath: mfResourceRootPath) {
+            
             let childFilesEnumerator = manager.enumerator(atPath: mfResourceRootPath)
             var fileName = ""
             var folderSize: UInt64 = 0
 
-            
-            while childFilesEnumerator?.nextObject() != nil {
-                guard let name = childFilesEnumerator?.nextObject() as? String else{
-                    break
-                }
+            while let name = childFilesEnumerator?.nextObject() as? String {
+                print("name=\(name)")
                 fileName = name
+//                print("childFilesEnumerator fileName=\(fileName)")
                 let fileAbsolutePath = folderPath.strings(byAppendingPaths: [fileName])
+//                print("fileAbsolutePath[0]=\(fileAbsolutePath[0])")
+//                print("fileAbsolutePath=\(fileAbsolutePath)")
+//                let size = fileSize(filePath: fileAbsolutePath[0])
+//                print("size=\(size)")
                 folderSize += fileSize(filePath: fileAbsolutePath[0])
             }
             return (CGFloat(folderSize) / (1024.0 * 1024.0))
