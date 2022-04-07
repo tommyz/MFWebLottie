@@ -56,17 +56,28 @@ open class MFWebLOTAnimationView: UIView, MFZipToolDelegate{
         var starDownload:Bool = false
         ///在Bundle内
         if let _ = Bundle.main.path(forResource: fileName, ofType: "json"){
+            print("在Bundle内")
             self.animationView = LOTAnimationView.init(name: fileName)
             return
         }
+        let str = MFCacheManager.shared.getCachePath(fileName: fileName)
+        print("getCachePath str=\(str)")
         if MFCacheManager.shared.getCachePath(fileName: fileName) != "NotFound"{
             ///在硬盘内
+            print("在硬盘内")
             let filePath = MFCacheManager.shared.getCachePath(fileName: fileName)
             self.animationView = LOTAnimationView.init(filePath: filePath)
         }else{
+            print("需要下载")
             ///需要下载
             MFDownloadManager.shared.downloadResource(fileName: fileName, downloadFinishCallBack: {[weak self] in
-                self?.zipTool.unZipFile(zipFileName: fileName)
+//                self?.zipTool.unZipFile(zipFileName: fileName)
+                print("tommy downloadFinishCallBack2")
+                print("fileName=\(fileName)")
+                print("self!.currentResourceMD5=\(self!.currentResourceMD5)")
+                MFCacheManager.shared.updateCacheInfo(fileName: fileName, md5: fileName)
+                let filePath = MFCacheManager.shared.getCachePath(fileName: fileName)
+                self!.updateLottieViewFromHDD(filePath: filePath)
             })
             starDownload = true
         }
@@ -217,10 +228,16 @@ extension MFWebLOTAnimationView{
             ///需要检查是否更新同url的内容
             MFDownloadManager.shared.checkResourceIsUpdate(fileName: fileName) { (md5) in
                 self.currentResourceMD5 = md5
+                print("tommy self.currentResourceMD5=\(self.currentResourceMD5)")
                 if !MFCacheManager.shared.isExistInCache(fileName: fileName, md5: md5){
                     ///需要下载更新
                     MFDownloadManager.shared.downloadResource(fileName: fileName, downloadFinishCallBack: {[weak self] in
-                        self?.zipTool.unZipFile(zipFileName: fileName)
+//                        self?.zipTool.unZipFile(zipFileName: fileName)
+                        print("tommy downloadFinishCallBack")
+                        MFCacheManager.shared.updateCacheInfo(fileName: fileName, md5: self!.currentResourceMD5)
+                        let filePath = MFCacheManager.shared.getCachePath(fileName: fileName)
+                        self!.updateLottieViewFromHDD(filePath: filePath)
+                        
                     })
                 }else{
                     ///在Bundle内

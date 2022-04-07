@@ -73,7 +73,11 @@ class MFDownloadManager: NSObject, URLSessionDownloadDelegate {
         self.downloadProgressCallBack = downloadProgressCallBack
         self.downloadFinishCallBack = downloadFinishCallBack
         self.failedCallBack = failedCallBack
-        guard let url = URL.init(string: basePath + "/\(fileName).zip") else {
+//        guard let url = URL.init(string: basePath + "/\(fileName).zip") else {
+//            self.failedCallBack?("下载地址不规范")
+//            return
+//        }
+        guard let url = URL.init(string: fileName) else {
             self.failedCallBack?("下载地址不规范")
             return
         }
