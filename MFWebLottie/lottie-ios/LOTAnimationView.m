@@ -60,6 +60,8 @@ static NSString * const kCompContainerAnimationKey = @"play";
   self = [self initWithFrame:CGRectZero];
   if (self) {
     LOTComposition *laScene = [[LOTAnimationCache sharedCache] animationForKey:url.absoluteString];
+      NSLog(@"url.absoluteString=%@",url.absoluteString);
+      NSLog(@"laScene=%@",laScene);
     if (laScene) {
       laScene.cacheKey = url.absoluteString;
       [self _initializeAnimationContainer];
@@ -67,6 +69,7 @@ static NSString * const kCompContainerAnimationKey = @"play";
     } else {
       dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
         NSData *animationData = [NSData dataWithContentsOfURL:url];
+          NSLog(@"animationData=%@",animationData);
         if (!animationData) {
           return;
         }
